@@ -435,7 +435,7 @@ def create_mesh(content_manager: ContentManager, model_resource: CompiledModelRe
         load_attachments(data_block["m_attachments"], container, import_context.scale)
 
     for scene_object in data_block['m_sceneObjects']:
-        import_scene_object(content_manager, data_block, g_vertex_offset, import_context, index_buffers, mesh_id,
+        g_vertex_offset = import_scene_object(content_manager, data_block, g_vertex_offset, import_context, index_buffers, mesh_id,
                             mesh_name, mesh_resource, model_resource, morph_block, morph_texture, objects, scene_object,
                             vertex_buffers, extra_vertex_buffers)
     return objects
@@ -450,10 +450,10 @@ def import_scene_object(content_manager: ContentManager, data_block, g_vertex_of
     else:
         draw_calls = scene_object["m_drawCalls"]
     for draw_call in draw_calls:
-        import_drawcall(content_manager, import_context, draw_call, mesh_id, mesh_name, mesh_resource, model_resource,
+        g_vertex_offset = import_drawcall(content_manager, import_context, draw_call, mesh_id, mesh_name, mesh_resource, model_resource,
                         data_block, g_vertex_offset, extra_vertex_buffers, morph_block, morph_texture, index_buffers,
                         vertex_buffers, objects)
-
+    return g_vertex_offset
 
 def combine_vertex_buffers(vertex_buffers: list[VertexBuffer], mesh_resource: CompiledMeshResource):
     if not vertex_buffers:
@@ -692,6 +692,7 @@ def import_drawcall(content_manager: ContentManager, import_context: ImportConte
 
     g_vertex_offset += vertex_count
     mesh.validate()
+    return g_vertex_offset
 
 
 def load_attachments(attachments_info: list[Object], container: ModelContainer, scale: float):
