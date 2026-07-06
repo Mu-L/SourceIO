@@ -490,7 +490,7 @@ def combine_vertex_buffers(vertex_buffers: list[VertexBuffer], mesh_resource: Co
 def import_drawcall(content_manager: ContentManager, import_context: ImportContext, draw_call: dict, mesh_id: int,
                     mesh_name: str, mesh_resource: CompiledMeshResource, model_resource: CompiledModelResource,
                     data_block: KVBlock, g_vertex_offset: int, extra_vertex_buffers: list[VertexBuffer],
-                    morph_block: MorphBlock, morph_texture: CompiledTextureResource, index_buffers: list[IndexBuffer],
+                    morph_block: MorphBlock, morph_texture: np.ndarray, index_buffers: list[IndexBuffer],
                     vertex_buffers: list[VertexBuffer], objects: list):
     assert draw_call['m_nPrimitiveType'] in [5, 'RENDER_PRIM_TRIANGLES']
     index_buffer_info = draw_call['m_indexBuffer']
