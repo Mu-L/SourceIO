@@ -189,6 +189,7 @@ def import_materials(bsp: VBSPFile, content_manager: ContentManager, settings: S
             content_manager.add_child(pak_lump)
         for texture_data in texture_data_lump.texture_data:
             material_name = strings_lump.strings[texture_data.name_id] or "NO_NAME"
+            material_name = material_name.lstrip("/\\")
             tmp = strip_patch_coordinates.sub("", material_name)
 
             mat = get_or_create_material(path_stem(tmp), tmp)
@@ -268,6 +269,7 @@ def import_materials(bsp: VBSPFile, content_manager: ContentManager, settings: S
         import_idtech3_materials()
     elif texture_info_lump and isinstance(texture_info_lump, Quake3TextureInfoLump):
         import_quake3_materials()
+
 
 def get_tex_info(face: Face, bsp: VBSPFile):
     tex_info_lump: TextureInfoLump = bsp.get_lump('LUMP_TEXINFO')
