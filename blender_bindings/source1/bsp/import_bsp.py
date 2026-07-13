@@ -373,7 +373,7 @@ def import_disp(bsp: VBSPFile, settings: Source1BSPSettings,
         disp_uv[:, 1] = 1 - ((np.dot(disp_vertices, tv2[:3]) + tv2[3] * settings.scale) / (
                 texture_data.view_height * settings.scale))
 
-        disp_vertices_alpha = disp_verts_lump.vertices['alpha'][disp_indices]
+        disp_vertices_alpha = disp_verts_lump.vertices['alpha'][disp_indices] / 255
         final_vertex_colors['vertex_alpha'] = np.concatenate(
             (np.hstack([disp_vertices_alpha, disp_vertices_alpha, disp_vertices_alpha]),
              np.ones((disp_vertices_alpha.shape[0], 1))), axis=1)
