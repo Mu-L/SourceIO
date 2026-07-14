@@ -147,7 +147,7 @@ class ShaderBase:
             asset_path = current_path / 'assets' / "source2_materials_5_0.blend"
             append_blend(str(asset_path), "node_groups")
 
-    def insert_object_tint(self, color_output_socket, tint_amount=1.0, tint_mask_output:None | object=None):
+    def insert_object_tint(self, color_output_socket, tint_amount=1.0, tint_mask_output: None | object = None):
         color_multiply_node = self.create_node(Nodes.ShaderNodeMixRGB)
         color_multiply_node.blend_type = 'MULTIPLY'
         if tint_mask_output is None:
@@ -203,7 +203,7 @@ class ShaderBase:
             image.pixels.foreach_set(image_data.ravel())
             return image
 
-    def load_texture(self, texture_name, texture_path) -> Optional[bpy.types.Image]:
+    def load_texture(self, texture_name:TinyPath, texture_path: TinyPath | None = None) -> Optional[bpy.types.Image]:
         pass
 
     @staticmethod
@@ -232,7 +232,10 @@ class ShaderBase:
         if file.startswith("/"):
             file = file[1:]
         file = TinyPath(file)
-        texture = self.load_texture(file.stem, file.parent)
+        if len(file.parts) == 1:
+            texture = self.load_texture(file.stem, None)
+        else:
+            texture = self.load_texture(file.stem, file.parent)
         return texture or self.get_missing_texture(f'missing_{file.stem}', default_color)
 
     @staticmethod
@@ -356,7 +359,9 @@ class ShaderBase:
     # Helper function to get node tree items like sockets by name from node groups with panels,
     # in case there are multiple with the same name.
     # This may still fail if there are multiple items with the same name & type at the same level on the tree
-    def get_nodetree_item_from_path(self, root: bpy.types.NodeTreeInterfaceItem | bpy.types.NodeTree, path: list[str], item_type: type=bpy.types.NodeTreeInterfaceItem, is_output=False, ignore_level=False):
+    def get_nodetree_item_from_path(self, root: bpy.types.NodeTreeInterfaceItem | bpy.types.NodeTree, path: list[str],
+                                    item_type: type = bpy.types.NodeTreeInterfaceItem, is_output=False,
+                                    ignore_level=False):
         check_in_out = isinstance(item_type, bpy.types.NodeTreeInterfaceSocket)
         in_out_str = 'OUTPUT' if is_output else 'INPUT'
 
@@ -373,7 +378,8 @@ class ShaderBase:
                 for i, item in enumerate(root.interface.items_tree):
                     if item.name == path[0] and item.parent.index == -1:
                         # if path len is 1, we're not looking for the root we're just trying to find the item.
-                        if len(path) == 1 and isinstance(item, item_type) and (check_in_out and curr_item.in_out != in_out_str):
+                        if len(path) == 1 and isinstance(item, item_type) and (
+                                check_in_out and curr_item.in_out != in_out_str):
                             continue
                         new_item = item
                         break
@@ -388,11 +394,12 @@ class ShaderBase:
 
         for path_segment in path:
             if curr_item.item_type == 'SOCKET':
-                self.logger.error(f'Current NodeTree item \'{curr_item.name}\' is a socket, but is not the last item in the path! Full path: {path}')
+                self.logger.error(
+                    f'Current NodeTree item \'{curr_item.name}\' is a socket, but is not the last item in the path! Full path: {path}')
 
             # .get for some reason works fine in blender's python console, but not for addons?
             # Accessing interface_items by name doesn't work (yet) due to a blender bug (bug report filed after 5.1)
-            #curr_item = curr_item.interface_items.get(path_segment)
+            # curr_item = curr_item.interface_items.get(path_segment)
             # HACK: check if invalid this way since .get doesn't work yet.
             next_index = curr_item.interface_items.find(path_segment)
             if next_index == -1:
@@ -402,12 +409,15 @@ class ShaderBase:
 
         if isinstance(curr_item, item_type):
             if check_in_out and curr_item.in_out != in_out_str:
-                self.logger.error(f'Found a NodeTree socket of name \'{curr_item.name}\' but the socket type is \'{curr_item.in_out}\' instead of \'{in_out_str}\'!')
+                self.logger.error(
+                    f'Found a NodeTree socket of name \'{curr_item.name}\' but the socket type is \'{curr_item.in_out}\' instead of \'{in_out_str}\'!')
 
         return curr_item
 
-    def get_group_socket_index(self, node_tree: bpy.types.NodeTree, socket_path: list[str], root: bpy.types.NodeTreeInterfaceItem=None, is_output=False, ignore_level=False):
-        socket = self.get_nodetree_item_from_path(root or node_tree, socket_path, bpy.types.NodeTreeInterfaceSocket, is_output, ignore_level)
+    def get_group_socket_index(self, node_tree: bpy.types.NodeTree, socket_path: list[str],
+                               root: bpy.types.NodeTreeInterfaceItem = None, is_output=False, ignore_level=False):
+        socket = self.get_nodetree_item_from_path(root or node_tree, socket_path, bpy.types.NodeTreeInterfaceSocket,
+                                                  is_output, ignore_level)
 
         # There's already an error from get_nodetree_item_from_path if this happens, so just return.
         if socket is None:
@@ -418,7 +428,8 @@ class ShaderBase:
 
         # go through all the sockets (input or output), and find the one with a matching unique identifier.
         socket_identifier = socket.identifier
-        group_sockets = node_tree.nodes['Group Input'].outputs if not is_output else node_tree.nodes['Group Output'].inputs
+        group_sockets = node_tree.nodes['Group Input'].outputs if not is_output else node_tree.nodes[
+            'Group Output'].inputs
         for i, node_socket in enumerate(group_sockets):
             if node_socket.identifier == socket_identifier:
                 return i

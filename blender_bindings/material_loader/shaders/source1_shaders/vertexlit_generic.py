@@ -321,6 +321,7 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
             basetexture_node = self.create_node(Nodes.ShaderNodeTexImage, '$stretch')
             basetexture_node.image = stretch
 
+        basetexture = self.basetexture
         if self.use_bvlg_status:
             self.do_arrange = True
 
@@ -339,8 +340,8 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
 
             final = group_node.outputs[0]
 
-            if self.basetexture:
-                basetexture_node = self.create_and_connect_texture_node(self.basetexture,
+            if basetexture:
+                basetexture_node = self.create_and_connect_texture_node(basetexture,
                                                                         group_node.inputs['$basetexture [texture]'],
                                                                         name='$basetexture')
                 basetexture_node.location = [-800, 0]
@@ -423,7 +424,7 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
                                            phongalbedo_node.inputs['phongalbedotint amount'])
                         self.connect_nodes(phongalbedo_node.outputs['$phongtint [RGB field]'],
                                            group_node.inputs['$phongtint [RGB field]'])
-                        if self.basetexture is not None:
+                        if basetexture is not None:
                             self.connect_nodes(basetexture_node.outputs['Color'],
                                                phongalbedo_node.inputs['$basetexture [texture]'])
                 else:
@@ -441,7 +442,7 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
                     selfillummask_node = self.create_and_connect_texture_node(self.selfillummask, group_node.inputs[
                         '$selfillummask [texture alpha]'], UV=uv)
                     selfillummask_node.location = [-500, -510]
-                elif self.basetexture is not None:
+                elif basetexture is not None:
                     self.connect_nodes(basetexture_node.outputs['Alpha'],
                                        group_node.inputs['$selfillummask [texture alpha]'])
                 if self.selfillummaskscale:
@@ -499,7 +500,7 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
                 alphatest_node.inputs['$alphatestreference [value]'].default_value = self.alphatestreference
                 alphatest_node.inputs['$allowalphatocoverage [boolean]'].default_value = self.allowalphatocoverage
                 alphatest_node.inputs['$translucent'].default_value = self.translucent
-                if self.basetexture:
+                if basetexture:
                     self.connect_nodes(basetexture_node.outputs[1],
                                        alphatest_node.inputs['Alpha [basemap texture alpha]'])
                 self.connect_nodes(final, alphatest_node.inputs[0])
@@ -510,7 +511,7 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
                     alphatest_node.inputs['$alphatestreference [value]'].default_value = self.alphatestreference
                     alphatest_node.inputs['$allowalphatocoverage [boolean]'].default_value = self.allowalphatocoverage
                     alphatest_node.inputs['$translucent'].default_value = self.translucent
-                    if self.basetexture:
+                    if basetexture:
                         self.connect_nodes(basetexture_node.outputs[1],
                                            alphatest_node.inputs['Alpha [basemap texture alpha]'])
                     self.connect_nodes(final_cycles, alphatest_node.inputs[0])
@@ -529,7 +530,7 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
             shader = self.create_node(Nodes.ShaderNodeBsdfPrincipled, self.SHADER)
             self.connect_nodes(shader.outputs['BSDF'], material_output.inputs['Surface'])
 
-            basetexture = self.basetexture
+            basetexture = basetexture
             if basetexture:
                 basetexture_node = self.create_node(Nodes.ShaderNodeTexImage, '$basetexture')
                 basetexture_node.image = basetexture
