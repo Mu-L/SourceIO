@@ -414,7 +414,7 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
                                                                                      phongexponent_group_node.inputs[
                                                                                          'alpha'],
                                                                                      name='$phongexponenttexture',
-                                                                                     UV=uv)
+                                                                                     uv_out=uv.output[0])
                     phongexponenttexture_node.location = [-800, -470]
 
                     if self.phongalbedotint is not None and not self.phongtint:
@@ -440,7 +440,7 @@ class VertexLitGeneric(DetailSupportMixin, Source1ShaderBase):
                 group_node.inputs['$selfillum [bool]'].default_value = 1
                 if self.selfillummask:
                     selfillummask_node = self.create_and_connect_texture_node(self.selfillummask, group_node.inputs[
-                        '$selfillummask [texture alpha]'], UV=uv)
+                        '$selfillummask [texture alpha]'], uv_out=uv.output[0])
                     selfillummask_node.location = [-500, -510]
                 elif basetexture is not None:
                     self.connect_nodes(basetexture_node.outputs['Alpha'],

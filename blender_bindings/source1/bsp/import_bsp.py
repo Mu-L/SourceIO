@@ -368,10 +368,8 @@ def import_disp(bsp: VBSPFile, settings: Source1BSPSettings,
 
             for j in range(num_edge_vertices):
                 disp_vertices[(i * num_edge_vertices + j)] = left_end + (left_right_step * j)
-        disp_uv[:, 0] = (np.dot(disp_vertices, tv1[:3]) + tv1[3] * settings.scale) / (
-                texture_data.view_width * settings.scale)
-        disp_uv[:, 1] = 1 - ((np.dot(disp_vertices, tv2[:3]) + tv2[3] * settings.scale) / (
-                texture_data.view_height * settings.scale))
+        disp_uv[:, 0] = (np.dot(disp_vertices / settings.scale, tv1[:3]) + tv1[3]) / (texture_data.view_width )
+        disp_uv[:, 1] = 1 - ((np.dot(disp_vertices / settings.scale, tv2[:3]) + tv2[3]) / (texture_data.view_height))
 
         disp_vertices_alpha = disp_verts_lump.vertices['alpha'][disp_indices] / 255
         final_vertex_colors['vertex_alpha'] = np.concatenate(

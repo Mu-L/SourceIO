@@ -277,14 +277,14 @@ class ShaderBase:
         return texture_node
 
     def create_and_connect_texture_node(self, texture, color_out_target=None, alpha_out_target=None, *, name=None,
-                                        UV=None):
+                                        uv_out=None):
         texture_node = self.create_texture_node(texture, name)
         if color_out_target is not None:
             self.connect_nodes(texture_node.outputs['Color'], color_out_target)
         if alpha_out_target is not None:
             self.connect_nodes(texture_node.outputs['Alpha'], alpha_out_target)
-        if UV is not None:
-            self.connect_nodes(UV.outputs[0], texture_node.inputs[0])
+        if uv_out is not None:
+            self.connect_nodes(uv_out, texture_node.inputs[0])
         return texture_node
 
     def get_node(self, name):

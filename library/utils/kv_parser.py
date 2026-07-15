@@ -17,7 +17,9 @@ class KVDataProxy(Mapping):
                         '$LINUX': False,
                         '$POSIX': False,
                         '>=dx90_20b': True,
-                        '<dx90_20b': False
+                        '<dx90_20b': False,
+                        'gpu>=1' : True,
+                        'gpu>1' : True,
                         }
 
     def __init__(self, data: list[KeyValuePair]):
