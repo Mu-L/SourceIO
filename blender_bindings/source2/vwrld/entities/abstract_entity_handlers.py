@@ -136,9 +136,10 @@ class AbstractEntityHandler:
         )))
 
     def _set_location_and_scale(self, obj, location, additional_scale: float | np.ndarray = 1.0):
+        scale = self.scale * additional_scale
         obj.location = location
-        obj.location *= additional_scale * self.scale
-        obj.scale *= additional_scale
+        obj.location *= scale
+        obj.scale *= scale
 
     def _set_location(self, obj, location):
         obj.location = location
