@@ -139,7 +139,7 @@ def create_armature(content_manager: ContentManager, resource: CompiledModelReso
             bl_bone.matrix = mat
 
     physics_block = get_physics_block(content_manager, resource)
-    if physics_block and physics_block["m_pFeModel"] and physics_block["m_pFeModel"]["m_TreeChildren"]:
+    if physics_block and physics_block.get("m_pFeModel") and physics_block["m_pFeModel"].get("m_TreeChildren"):
         p_model_data = physics_block["m_pFeModel"]
         names = p_model_data["m_CtrlName"]
 
@@ -149,6 +149,13 @@ def create_armature(content_manager: ContentManager, resource: CompiledModelReso
 
             if child in armature.edit_bones:
                 armature.edit_bones.get(child).parent = armature.edit_bones.get(parent)
+    # elif physics_block and physics_block.get("m_boneNames") and physics_block.get("m_boneParents") and physics_block.get("m_indexNames"):
+    #     names = physics_block["m_boneNames"]
+    #     index_names = physics_block["m_indexNames"]
+    #     bone_parents = physics_block["m_boneParents"]
+    #
+    #     for index, parent in enumerate(bone_parents):
+    #         parent =
 
     bpy.ops.object.mode_set(mode='OBJECT')
     # armature_obj.rotation_euler = Euler([math.radians(180), 0, math.radians(90)])
